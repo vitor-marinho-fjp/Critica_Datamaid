@@ -16,7 +16,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Nesta oficina, aprenderemos como usar o pacote DataMaid no R para realizar crítica de dados
 
-### O que é o DataMaid?
+Documentação DataMaid : <https://cran.r-project.org/web/packages/dataMaid/index.html>
+
+```{r}
+vignette("extending_dataMaid")
+```
+
+Tutorial disponível:[ https://github.com/vitor-marinho-fjp/Critica_Datamaid](https://github.com/vitor-marinho-fjp/Critica_Datamaid)
+
+O que é o DataMaid?
 
 Um assistente de limpeza de dados capaz de fornecer um documento para ser lido e avaliado por uma pessoa. Uma ferramenta para auxiliar na lógica/verificação de erros tanto em colunas quanto em linhas
 
@@ -202,7 +210,7 @@ makeDataReport(imrs_saude, summaries = setSummaries(
 **Funções do DataMaid**
 
 | name                    | descrição                                                                |
-|:------------------------|:-------------------------------------------------------------------------|
+|:-------------------|:---------------------------------------------------|
 | identifyCaseIssues      | Identificar problemas                                                    |
 | identifyLoners          | Identificar variáveis com \< 6 obs.                                      |
 | identifyMissing         | Identificar valores ausentes mal codificados                             |
