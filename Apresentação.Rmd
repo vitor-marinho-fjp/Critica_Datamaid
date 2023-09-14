@@ -1,0 +1,105 @@
+---
+title: "Oficina Prática: Crítica de Dados com DataMaid"
+subtitle: "Prática em R"
+author: "Vitor Marinho"
+institute: "FJP"
+date: "2023/23/09)"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+# Introdução
+
+### Nesta oficina, aprenderemos como usar o pacote DataMaid no R para realizar crítica de dados
+
+
+Um assistente de limpeza de dados capaz de fornecer um documento para ser lido e avaliado por uma pessoa. 
+
+---
+## Exemplos de erros em base de dados
+
+
+ Classe incorreta
+
+
+ Duplicatas
+
+Consistência de capitalização (Belo Horizonte vs Belo horizonte)
+
+
+Valor improvável (peso = 1000, idade = 201)
+
+Espaços em branco
+
+
+Indicadores de falta não reconhecidos
+
+
+Quantidade de faltantes (NA)
+
+
+Observações/categorias únicas com contagem baixa
+
+Dados imprecisos (data de falecimento antes da data de nascimento)
+
+---
+## Fluxo de trabalho com dataMaid
+Fonte: Molly Olson ( R Ladies)
+```{r echo=FALSE}
+knitr::include_graphics('download.png')
+```
+
+---
+
+### Sumarize e Visualize
+
+A função *makeDataReport* um relatório de visão geral dos dados que resume o conteúdo de um conjunto de dados e sinalize possíveis problemas. Os problemas potenciais são identificados executando um conjunto de *verificações de validação específicas* da classe, de modo que diferentes verificações sejam realizadas em diferentes tipos de variáveis. As etapas de verificação podem ser personalizadas de acordo com a entrada do usuário e/ou tipo de dados da variável inserida
+
+---
+
+```{r message=FALSE, warning=FALSE}
+### Instalação e Carregamento do Pacote
+
+# Lista de pacotes necessários
+pacotes <- c('dataMaid', 'tidyverse', 'readxl', 'gtExtras')
+
+# Verificar se os pacotes estão instalados e instalá-los se necessário
+for (pacote in pacotes) {
+  if (!requireNamespace(pacote, quietly = TRUE)) {
+    install.packages(pacote)
+    library(pacote, character.only = TRUE)
+  } else {
+    library(pacote, character.only = TRUE)
+  }
+}
+```
+
+---
+### Parte 1: Crítica de Dados
+
+Disponível em: https://docs.google.com/spreadsheets/d/1e8eTy8gwlWFLV8zzEPEB56WR0TkJ5i1u/edit?usp=sharing&ouid=114631608050578367156&rtpof=true&sd=true
+
+```{r message=FALSE, warning=FALSE}
+imrs_saude <- read_excel("IMRS_BASE_SAUDE_2000-2021.xlsx")
+
+
+```
+
+---
+Análise Inicial dos Dados
+
+A função makeDataReport gera um relatório de visão geral dos dados que resume o conteúdo de um conjunto de dados e sinalize possíveis problemas. 
+
+```{r message=FALSE, warning=FALSE}
+
+makeDataReport(imrs_saude, replace=TRUE, output = "html")
+```
+
+
+---
+
