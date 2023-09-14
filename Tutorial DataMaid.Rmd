@@ -1,0 +1,186 @@
+---
+title: "Oficina Prática: Crítica e Imputação de Dados com DataMaid no R"
+author: "Vitor Marinho"
+date: "2023"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introdução
+
+Nesta oficina, aprenderemos como usar o pacote DataMaid no R para realizar crítica de dados
+
+### O que é o DataMaid?
+
+Um assistente de limpeza de dados capaz de fornecer um documento para ser lido e avaliado por uma pessoa. Uma ferramenta para auxiliar na lógica/verificação de erros tanto em colunas quanto em linhas
+
+### Exemplos de erros em verificações de dados e limpeza de dados
+
+-   Classe incorreta
+
+-   Duplicatas
+
+-   Consistência de capitalização (**B**elo **H**orizonte vs **B**elo **h**orizonte)
+
+-   Valor improvável (peso = 1000, idade = 201)
+
+-   Espaços em branco
+
+-   Indicadores de falta não reconhecidos
+
+-   Quantidade de faltantes (NA)
+
+-   Observações/categorias únicas com contagem baixa
+
+-   Dados imprecisos (data de falecimento antes da data de nascimento)
+
+### Fluxo de trabalho com dataMaid
+
+![Fonte: Molly Olson ( R Ladies)](download.png)
+
+1.  Resuma: quais informações a variável contém?
+
+2.  Visualize: como é a distribuição da variável?
+
+3.  Verifique: Quais problemas potenciais existem com a variável?
+
+4.  Correção: corrija problemas operaçionais.
+
+5.  Validar: realmente corrigimos o problema e/ou verificamos os erros nas linhas.
+
+# **Summarize/Visualize**
+
+A função `makeDataReport` um relatório de visão geral dos dados que *resume* o conteúdo de um conjunto de dados e *sinalize possíveis problemas*. Os problemas potenciais são identificados executando um conjunto de *verificações de validação* específicas da classe, de modo que diferentes verificações sejam realizadas em diferentes tipos de variáveis. As etapas de verificação podem ser personalizadas de acordo com a entrada do usuário e/ou tipo de dados da variável inserida
+
+Para cada variável, um conjunto de funções de pré-verificação (controladas pelo argumento preChecks) é executado primeiro e depois uma bateria de funções é aplicada dependendo da classe da variável.
+
+## Parte 1: Crítica de Dados
+
+```{r}
+
+
+### Instalação e Carregamento do Pacote
+
+# Lista de pacotes necessários
+pacotes <- c('dataMaid', 'tidyverse', 'readxl', 'gtExtras')
+
+# Verificar se os pacotes estão instalados e instalá-los se necessário
+for (pacote in pacotes) {
+  if (!requireNamespace(pacote, quietly = TRUE)) {
+    install.packages(pacote)
+    library(pacote, character.only = TRUE)
+  } else {
+    library(pacote, character.only = TRUE)
+  }
+}
+```
+
+Documentação
+
+```{r eval=FALSE, include=FALSE}
+vignette("extending_dataMaid")
+```
+
+## Carregando os Dados de Exemplo IMRS - Saúde
+
+Disponível em: [IMRS-SAÚDE](https://docs.google.com/spreadsheets/d/1e8eTy8gwlWFLV8zzEPEB56WR0TkJ5i1u/edit?usp=sharing&ouid=114631608050578367156&rtpof=true&sd=true){.uri}
+
+```{r message=FALSE, warning=FALSE}
+imrs_saude <- read_excel("IMRS_BASE_SAUDE_2000-2021.xlsx")
+
+head(imrs_saude)
+```
+
+## Análise Inicial dos Dados
+
+A função `makeDataReport` gera um relatório de visão geral dos dados que *resume* o conteúdo de um conjunto de dados e *sinalize possíveis problemas*. Os problemas potenciais são identificados executando um conjunto de ***verificações** de **validação*** **específicas** da classe, de modo que diferentes verificações sejam realizadas em diferentes tipos de variáveis. As etapas de **verificação podem ser personalizadas** de acordo com a entrada do usuário e/ou tipo de dados da variável inserida
+
+```{r eval=FALSE, include=FALSE}
+
+makeDataReport(imrs_saude, replace=TRUE, output = "html")
+```
+
+# Crítica de Dados Personalizada
+
+Além da análise inicial, você pode criar regras personalizadas para crítica de dados.
+
+Por exemplo, podemos verificar a variável ***S_TXBRUTAMORT***
+
+Trace a distribuição de uma variável.
+
+```{r}
+
+
+standardVisual(imrs_saude$S_TXBRUTAMORT, "Taxa bruta de mortalidade")
+```
+
+```{r}
+
+standardVisual(imrs_saude$S_TXMOISQCOR45A59, "Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos")
+```
+
+# Trabalhando com funções personalizadas
+
+## Funções de sumarização
+
+`countZeros()`
+
+Criando a função para ocorrências de valores iguais a zero
+
+```{r}
+
+countZeros <- function(v, ...) {
+  val <- length(which(v == 0))
+  summaryResult(list(feature = "No. zeros", result = val, value = val))
+}
+
+
+```
+
+```{r}
+countZeros(imrs_saude$S_TXMOHOMI15A29)
+
+```
+
+### Adicionando novas funções ao `report`
+
+```{r}
+makeDataReport(imrs_saude, summaries = setSummaries(
+  character = defaultCharacterSummaries(add = "countZeros"),
+  factor = defaultFactorSummaries(add = "countZeros"),
+  labelled = defaultLabelledSummaries(add = "countZeros"),
+  numeric = defaultNumericSummaries(add = "countZeros"),  
+  integer = defaultIntegerSummaries(add = "countZeros"),
+  logical = defaultLogicalSummaries(add = c("countMissing"))
+), replace=TRUE, output = "html")
+
+```
+
+**Funções do DataMaid**
+
+| name                    | descrição                                                                |
+|:------------------------|:-------------------------------------------------------------------------|
+| identifyCaseIssues      | Identificar problemas                                                    |
+| identifyLoners          | Identificar variáveis com \< 6 obs.                                      |
+| identifyMissing         | Identificar valores ausentes mal codificados                             |
+| identifyNums            | Identificar variáveis numéricas ou inteiras classificadas incorretamente |
+| identifyOutliers        | Identificar outliers                                                     |
+| identifyOutliersTBStyle | Identify outliers (Turkish Boxplot style)                                |
+| identifyWhitespace      | Identifique espaços em branco prefixados e sufixados                     |
+| isCPR                   | Identify Danish CPR numbers                                              |
+| isEmpty                 | Verifique se a variável contém apenas um único valor                     |
+| isKey                   | Verifique se a variável é uma chave                                      |
+| isSingular              | Verifique se a variável contém apenas um único valor                     |
+| isSupported             | Verifique se a classe da variável é suportada pelo dataMaid.             |
+
+## Recursos Adicionais
+
+Documentação DataMaid - <https://github.com/ekstroem/DataMaid>
+
+# Parte 2: Crítica de Dados
