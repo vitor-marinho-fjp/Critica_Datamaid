@@ -148,17 +148,54 @@ countZeros(imrs_saude$S_TXMOHOMI15A29)
 
 ```
 
+Esta função é projetada para contar os valores atípicos (outliers) em uma variável numérica `v` usando a abordagem do intervalo interquartil (IQR) com um fator de limiar (threshold).
+
+```{r}
+#Função para Identificar Outliers:
+countOutliers <- function(v, threshold = 1.5) {
+  q1 <- quantile(v, 0.25)
+  q3 <- quantile(v, 0.75)
+  iqr <- q3 - q1
+  lower_bound <- q1 - threshold * iqr
+  upper_bound <- q3 + threshold * iqr
+  val <- length(which(v < lower_bound | v > upper_bound))
+  summaryResult(list(feature = "No. outliers", result = val, value = val))
+}
+
+```
+
+Crie uma função que calcule estatísticas (média, mediana, etc.) para uma variável numérica, segmentadas por grupos de uma variável categórica. Isso pode ser útil para entender as diferenças entre grupos.
+
+```{r}
+calculateStatsByGroup <- function(data, numeric_var, categorical_var) {
+  stats_by_group <- data %>%
+    group_by({{categorical_var}}) %>%
+    summarise(
+      Mean = mean({{numeric_var}}, na.rm = TRUE),
+      Median = median({{numeric_var}}, na.rm = TRUE),
+      SD = sd({{numeric_var}}, na.rm = TRUE)
+    )
+  summaryResult(list(
+    feature = paste("Summary Statistics by", as_label(categorical_var)),
+    result = stats_by_group,
+    value = NULL
+  ))
+}
+
+```
+
 ### Adicionando novas funções ao `report`
 
 ```{r}
 makeDataReport(imrs_saude, summaries = setSummaries(
-  character = defaultCharacterSummaries(add = "countZeros"),
-  factor = defaultFactorSummaries(add = "countZeros"),
-  labelled = defaultLabelledSummaries(add = "countZeros"),
-  numeric = defaultNumericSummaries(add = "countZeros"),  
-  integer = defaultIntegerSummaries(add = "countZeros"),
-  logical = defaultLogicalSummaries(add = c("countMissing"))
-), replace=TRUE, output = "html")
+  character = defaultCharacterSummaries(add = c("countZeros", "countOutliers")),
+  factor = defaultFactorSummaries(add = c("countZeros", "countOutliers")),
+  labelled = defaultLabelledSummaries(add = c("countZeros", "countOutliers")),
+  numeric = defaultNumericSummaries(add = c("countZeros", "countOutliers")),  
+  integer = defaultIntegerSummaries(add = c("countZeros", "countOutliers")),
+  logical = defaultLogicalSummaries(add = c("countZeros", "countOutliers"))
+), replace = TRUE, output = "html")
+
 
 ```
 
