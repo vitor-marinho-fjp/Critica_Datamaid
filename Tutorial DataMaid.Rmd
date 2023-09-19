@@ -1,5 +1,5 @@
 ---
-title: "Oficina Prática: Crítica e Imputação de Dados com DataMaid no R"
+title: "Workshop: Crítica e Imputação de Dados no R: preparação dos dados"
 author: "Vitor Marinho"
 date: "2023"
 output: 
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introdução
 
-Nesta oficina, aprenderemos como usar o pacote DataMaid no R para realizar crítica de dados
+Nesta oficina, aprenderemos como usar o pacote DataMaid no R para uma etapa prévia a crítica de dados: a preparação dos dados.
 
 Documentação DataMaid : <https://cran.r-project.org/web/packages/dataMaid/index.html>
 
@@ -22,13 +22,13 @@ Documentação DataMaid : <https://cran.r-project.org/web/packages/dataMaid/inde
 vignette("extending_dataMaid")
 ```
 
-Tutorial disponível:[ https://github.com/vitor-marinho-fjp/Critica_Datamaid](https://github.com/vitor-marinho-fjp/Critica_Datamaid)
+Tutorial disponível: <https://github.com/vitor-marinho-fjp/Critica_Datamaid>
 
 O que é o DataMaid?
 
-Um assistente de limpeza de dados capaz de fornecer um documento para ser lido e avaliado por uma pessoa. Uma ferramenta para auxiliar na lógica/verificação de erros tanto em colunas quanto em linhas
+Um assistente de limpeza de dados capaz de fornecer um documento para ser lido e avaliado por uma pessoa. Uma ferramenta para auxiliar na lógica/verificação de erros tanto em colunas quanto em linhas.
 
-### Exemplos de erros em verificações de dados e limpeza de dados
+### Exemplos de erros em verificações de dados para a limpeza de dados:
 
 -   Classe incorreta
 
@@ -48,27 +48,15 @@ Um assistente de limpeza de dados capaz de fornecer um documento para ser lido e
 
 -   Dados imprecisos (data de falecimento antes da data de nascimento)
 
-### Fluxo de trabalho com dataMaid
+### Inserção do dataMaid no Fluxo de trabalho em Ciência de Dados
 
-![Fonte: Molly Olson ( R Ladies)](download.png)
+![Fonte: Wickham & Grolemund (2017).](data-science.png)
 
-1.  Resuma: quais informações a variável contém?
+Foco nos dois primeiros passos: Import → Tidy
 
-2.  Visualize: como é a distribuição da variável?
+# **Import/Tidy**
 
-3.  Verifique: Quais problemas potenciais existem com a variável?
-
-4.  Correção: corrija problemas operaçionais.
-
-5.  Validar: realmente corrigimos o problema e/ou verificamos os erros nas linhas.
-
-# **Summarize/Visualize**
-
-A função `makeDataReport` um relatório de visão geral dos dados que *resume* o conteúdo de um conjunto de dados e *sinalize possíveis problemas*. Os problemas potenciais são identificados executando um conjunto de *verificações de validação* específicas da classe, de modo que diferentes verificações sejam realizadas em diferentes tipos de variáveis. As etapas de verificação podem ser personalizadas de acordo com a entrada do usuário e/ou tipo de dados da variável inserida
-
-Para cada variável, um conjunto de funções de pré-verificação (controladas pelo argumento preChecks) é executado primeiro e depois uma bateria de funções é aplicada dependendo da classe da variável.
-
-## Parte 1: Crítica de Dados
+## Pacotes utilizados
 
 ```{r}
 
@@ -89,13 +77,13 @@ for (pacote in pacotes) {
 }
 ```
 
-Documentação
+Documentação:
 
 ```{r eval=FALSE, include=FALSE}
 vignette("extending_dataMaid")
 ```
 
-## Carregando os Dados de Exemplo IMRS - Saúde
+## Carregando os Dados de Exemplo Indicadores de Saúde
 
 Disponível em: [IMRS-SAÚDE](https://docs.google.com/spreadsheets/d/1e8eTy8gwlWFLV8zzEPEB56WR0TkJ5i1u/edit?usp=sharing&ouid=114631608050578367156&rtpof=true&sd=true){.uri}
 
@@ -107,16 +95,18 @@ head(imrs_saude)
 
 ## Análise Inicial dos Dados
 
-A função `makeDataReport` gera um relatório de visão geral dos dados que *resume* o conteúdo de um conjunto de dados e *sinalize possíveis problemas*. Os problemas potenciais são identificados executando um conjunto de ***verificações** de **validação*** **específicas** da classe, de modo que diferentes verificações sejam realizadas em diferentes tipos de variáveis. As etapas de **verificação podem ser personalizadas** de acordo com a entrada do usuário e/ou tipo de dados da variável inserida
+A função `makeDataReport` produz um relatório de visão geral dos dados em que *resume* o conteúdo do conjunto de dados e *sinaliza possíveis problemas*. Esses potenciais erros são identificados executando um conjunto de *verificações de validação* específicas da classe, de modo que diferentes verificações sejam realizadas em diferentes tipos de variáveis. As etapas de verificação podem ser personalizadas de acordo com a entrada do usuário e/ou tipo de dados da variável inserida
+
+Para cada variável, um conjunto de funções de pré-verificação (controladas pelo argumento preChecks) é executado primeiro e depois uma bateria de funções é aplicada dependendo da classe da variável.
 
 ```{r eval=FALSE, include=FALSE}
 
 makeDataReport(imrs_saude, replace=TRUE, output = "html")
 ```
 
-# Crítica de Dados Personalizada
+# Extra: Personalizando o Report
 
-Além da análise inicial, você pode criar regras personalizadas para crítica de dados.
+Além da análise inicial, você pode criar regras personalizadas para a análise inicial dos dados.
 
 Por exemplo, podemos verificar a variável ***S_TXBRUTAMORT***
 
@@ -133,13 +123,13 @@ standardVisual(imrs_saude$S_TXBRUTAMORT, "Taxa bruta de mortalidade")
 standardVisual(imrs_saude$S_TXMOISQCOR45A59, "Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos")
 ```
 
-# Trabalhando com funções personalizadas
+## Trabalhando com funções personalizadas
 
-## Funções de sumarização
+### Funções de sumarização
 
-`countZeros()`
+Pode-se criar funções que seja do interesse a verificação. Por exemplo, um função para ocorrências de valores iguais a zero: `countZeros()`
 
-Criando a função para ocorrências de valores iguais a zero
+Criando a função:
 
 ```{r}
 
@@ -156,7 +146,7 @@ countZeros(imrs_saude$S_TXMOHOMI15A29)
 
 ```
 
-Esta função é projetada para contar os valores atípicos (outliers) em uma variável numérica `v` usando a abordagem do intervalo interquartil (IQR) com um fator de limiar (threshold).
+uma outra função útil seria a contagem dos valores atípicos (outliers) em uma variável numérica `v` usando a abordagem do intervalo interquartil (IQR) com um fator de limiar (threshold):
 
 ```{r}
 #Função para Identificar Outliers:
@@ -172,7 +162,7 @@ countOutliers <- function(v, threshold = 1.5) {
 
 ```
 
-Crie uma função que calcule estatísticas (média, mediana, etc.) para uma variável numérica, segmentadas por grupos de uma variável categórica. Isso pode ser útil para entender as diferenças entre grupos.
+Além dessas, outras possibilidades são possíveis, por exemplo, criar uma função que calcule estatísticas (média, mediana, etc.) para uma variável numérica, segmentadas por grupos de uma variável categórica. Isso pode ser útil para entender as diferenças entre grupos:
 
 ```{r}
 calculateStatsByGroup <- function(data, numeric_var, categorical_var) {
@@ -194,6 +184,8 @@ calculateStatsByGroup <- function(data, numeric_var, categorical_var) {
 
 ### Adicionando novas funções ao `report`
 
+A inclusão das funções criadas anteriormente são realizadas da seguinte maneira:
+
 ```{r}
 makeDataReport(imrs_saude, summaries = setSummaries(
   character = defaultCharacterSummaries(add = c("countZeros", "countOutliers")),
@@ -210,7 +202,7 @@ makeDataReport(imrs_saude, summaries = setSummaries(
 **Funções do DataMaid**
 
 | name                    | descrição                                                                |
-|:-------------------|:---------------------------------------------------|
+|:--------------------|:--------------------------------------------------|
 | identifyCaseIssues      | Identificar problemas                                                    |
 | identifyLoners          | Identificar variáveis com \< 6 obs.                                      |
 | identifyMissing         | Identificar valores ausentes mal codificados                             |
@@ -227,5 +219,3 @@ makeDataReport(imrs_saude, summaries = setSummaries(
 ## Recursos Adicionais
 
 Documentação DataMaid - <https://github.com/ekstroem/DataMaid>
-
-# Parte 2: Crítica de Dados
