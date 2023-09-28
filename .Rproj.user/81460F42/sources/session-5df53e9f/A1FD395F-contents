@@ -1,0 +1,147 @@
+### Instalação e Carregamento do Pacote
+
+# Lista de pacotes necessários
+pacotes <- c('dataMaid', 'tidyverse', 'readxl', 'gtExtras')
+
+# Verificar se os pacotes estão instalados e instalá-los se necessário
+for (pacote in pacotes) {
+  if (!requireNamespace(pacote, quietly = TRUE)) {
+    install.packages(pacote)
+    library(pacote, character.only = TRUE)
+  } else {
+    library(pacote, character.only = TRUE)
+  }
+}
+
+
+imrs_saude <- read_excel("C:/Users/caios/Downloads/IMRS_BASE_SAUDE_2000-2021.xlsx")
+
+head(imrs_saude)
+
+standardVisual(imrs_saude$S_TXBRUTAMORT, "Taxa bruta de mortalidade")
+standardVisual(imrs_saude$S_TXMOISQCOR45A59, "Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos")
+
+
+countZeros <- function(v, ...) {
+  val <- length(which(v == 0))
+  summaryResult(list(feature = "No. zeros", result = val, value = val))
+}
+countZeros(imrs_saude$S_TXMOHOMI15A29)
+
+makeDataReport(imrs_saude, summaries = setSummaries(
+  character = defaultCharacterSummaries(add = "countZeros"),
+  factor = defaultFactorSummaries(add = "countZeros"),
+  labelled = defaultLabelledSummaries(add = "countZeros"),
+  numeric = defaultNumericSummaries(add = "countZeros"),  
+  integer = defaultIntegerSummaries(add = "countZeros"),
+  logical = defaultLogicalSummaries(add = c("countMissing"))
+), replace=TRUE, output = "html")
+
+
+
+library(validate)
+
+# Cria regras de crítica do tipo de variável para aplicação aos dados
+# do questionário da amostra do CD2010
+regras_tipo <- validator(
+  TI01 =  is.numeric(S_TXBRUTAMORT),
+  TI02 =  is.numeric(S_TXBRUTAMORTPAD),  
+  TI03 =  is.numeric(S_TXMOISQCOR45A59),  
+  TI04 =  is.numeric(S_TXMOAVC45A59),    
+  TI05 =  is.numeric(S_TXMOATRA15A29),    
+  TI06 =  is.numeric(S_TXMOHOMI),        
+  TI07 =  is.numeric(S_TXMOHOMI15A29),    
+  TI08 =  is.numeric(S_TXMOCANCOLUT),     
+  TI09 =  is.numeric(S_TXMOCANMA ),       
+  TI10 =  is.numeric(S_TXMOCANPUL ),     
+  TI11 =  is.numeric(S_OBITO60),       
+  TI12 =  is.numeric(S_NASCBAIXOPESO),   
+  TI13 =  is.integer(S_OBINFSIFILS),      
+  TI14 =  is.integer(S_OBTETANONEO),     
+  TI15 =  is.integer(S_OBRAIVA ),         
+  TI16 =  is.numeric(S_INTERDVHID),      
+  TI17 =  is.numeric(S_INTERDRSAI ),      
+  TI18 =  is.numeric(S_COBPSF ),         
+  TI19 =  is.numeric(S_NASC7CONSUL),      
+  TI20 =  is.numeric(S_TETRA),           
+  TI21 =  is.numeric(S_POLIO),           
+  TI22 =  is.numeric(S_TRIPLICE ),      
+  TI23 =  is.numeric(S_FAMARELA ),        
+  TI24 =  is.numeric(S_OBMALDEF ),        
+  TI25 =  is.numeric(S_OBITSEMASSIS),    
+  TI26 =  is.numeric(S_INTERDCV40),      
+  TI27 =  is.numeric(S_INTERDIAB ),       
+  TI28 =  is.numeric(S_INTERSAP  ),      
+  TI29 =  is.numeric(S_INTERSAP1A5),      
+  TI30 =  is.numeric(S_INTERSAP60 ),     
+  TI31 =  is.numeric(S_FRATFEMUR60),      
+  TI32 =  is.numeric(S_CANCPROST  ),    
+  TI33 =  is.numeric(S_INTMEDCOMPLDESMIC ),
+  TI34 =  is.numeric(S_PARTODESLOCMIC),  
+  TI35 =  is.numeric(S_PENTA),           
+  TI36 =  is.numeric(S_TXMODCNT30A69),   
+  TI37 =  is.numeric(S_ICSAB_MS)
+)
+
+# Aplica regras de verificação do tipo da variável
+aplica_regras_tipo <- confront(imrs_saude, regras_tipo)
+values(aplica_regras_tipo)
+plot(aplica_regras_tipo)
+
+
+
+
+
+regras_validade <- validator(
+VI01 =  S_TXBRUTAMORT >= 0,
+VI02 =  S_TXBRUTAMORTPAD >= 0,  
+VI03 =  S_TXMOISQCOR45A59 >= 0,  
+VI04 =  S_TXMOAVC45A59 >= 0,    
+VI05 =  S_TXMOATRA15A29 >= 0,    
+VI06 =  S_TXMOHOMI >= 0,        
+VI07 =  S_TXMOHOMI15A29 >= 0,    
+VI08 =  S_TXMOCANCOLUT >= 0,     
+VI09 =  S_TXMOCANMA  >= 0,       
+VI10 =  S_TXMOCANPUL  >= 0,     
+VI11 =  S_OBITO60 >= 0 & S_OBITO60 <= 100,       
+VI12 =  S_NASCBAIXOPESO >= 0 & S_NASCBAIXOPESO <= 100,   
+VI13 =  S_OBINFSIFILS >= 0,      
+VI14 =  S_OBTETANONEO >= 0,     
+VI15 =  S_OBRAIVA  >= 0,         
+VI16 =  S_INTERDVHID >= 0 & S_INTERDVHID <= 100,      
+VI17 =  S_INTERDRSAI  >= 0 & S_INTERDRSAI  <= 100,      
+VI18 =  S_COBPSF  >= 0 & S_COBPSF <= 100,         
+VI19 =  S_NASC7CONSUL >= 0 & S_NASC7CONSUL <= 100,      
+VI20 =  S_TETRA >= 0 & S_TETRA <= 100,           
+VI21 =  S_POLIO >= 0 &  S_POLIO <= 100,           
+VI22 =  S_TRIPLICE  >= 0 &  S_TRIPLICE <= 100,      
+VI23 =  S_FAMARELA  >= 0 & S_FAMARELA <= 100,        
+VI24 =  S_OBMALDEF  >= 0 & S_OBMALDEF <= 100,        
+VI25 =  S_OBITSEMASSIS >= 0 &  S_OBITSEMASSIS <= 100,    
+VI26 =  S_INTERDCV40 >= 0 & S_INTERDCV40 <= 100,      
+VI27 =  S_INTERDIAB  >= 0 & S_INTERDIAB <= 100,       
+VI28 =  S_INTERSAP   >= 0 & S_INTERSAP <= 100,      
+VI29 =  S_INTERSAP1A5 >= 0 & S_INTERSAP1A5 <= 100,      
+VI30 =  S_INTERSAP60  >= 0 & S_INTERSAP60 <= 100,     
+VI31 =  S_FRATFEMUR60 >= 0 & S_FRATFEMUR60 <= 100,      
+VI32 =  S_CANCPROST   >= 0,    
+VI33 =  S_INTMEDCOMPLDESMIC  >= 0 & S_INTMEDCOMPLDESMIC <= 100,
+VI34 =  S_PARTODESLOCMIC >= 0 & S_PARTODESLOCMIC <= 100,  
+VI35 =  S_PENTA >= 0 &  S_PENTA <= 100,           
+VI36 =  S_TXMODCNT30A69 >= 0,   
+VI37 =  S_ICSAB_MS >= 0 & S_ICSAB_MS <= 100
+)
+
+aplica_regras_validade <- confront(imrs_saude, regras_validade)
+
+values(aplica_regras_validade)
+keyset(aplica_regras_validade)
+plot(aplica_regras_validade)
+summary(aplica_regras_validade)
+summary(regras_validade)
+
+
+
+CI = S_OBINFSIFILS <= população menor de um ano de idade
+CI = S_OBTETANONEO <= total de nascidos vivos
+CI = S_OBRAIVA  <= total da população

@@ -1,0 +1,9 @@
+"0",""
+"0","makeDataReport(imrs_saude, replace=TRUE, output = ""html"")"
+"2","The default of 'doScale' is FALSE now for stability;
+  set options(mc_doScale_quiet=TRUE) to suppress this (once per session) message
+"
+"2","Warning: NAs produced by integer overflow"
+"2","Data report generation is finished. Please wait while your output file is being rendered.
+"
+"2","Warning: package 'pander' was built under R version 4.2.3"

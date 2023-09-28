@@ -1,0 +1,3 @@
+"0","imrs_saude <- read_excel(""IMRS_BASE_SAUDE_2000-2021.xlsx"")"
+"0",""
+"0","head(imrs_saude)"
