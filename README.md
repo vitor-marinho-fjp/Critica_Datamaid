@@ -63,7 +63,7 @@ Sinta-se à vontade para explorar mais detalhes e personalizar este projeto de a
 
 ## Autor
 
-[Vitor Marinho]
+Vitor Marinho
 
 
 
