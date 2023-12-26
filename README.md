@@ -3,7 +3,8 @@ Aqui está um exemplo de arquivo README.md para o seu projeto em R:
 ```markdown
 # Projeto de Análise de Dados em R
 
-Este projeto consiste em uma análise de dados em R, que inclui a instalação e carregamento de pacotes necessários, leitura de uma base de dados, geração de relatórios de qualidade de dados e a adição de funções personalizadas para análise de dados.
+Este projeto consiste em uma análise de dados em R,
+leitura de uma base de dados, geração de relatórios de qualidade de dados e a adição de funções personalizadas para análise de dados.
 
 ## Instalação e Carregamento de Pacotes
 
