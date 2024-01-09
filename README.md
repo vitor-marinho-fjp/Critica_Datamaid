@@ -1,4 +1,3 @@
-Aqui está um exemplo de arquivo README.md para o seu projeto em R:
 
 ```markdown
 # Projeto de Análise de Dados em R
