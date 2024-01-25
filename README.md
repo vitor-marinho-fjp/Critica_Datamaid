@@ -5,9 +5,9 @@ description: |
   Compartilhando o código em R
 abstract: |
   Neste tutorial, você aprenderá como utilizar o pacote DataMaid no ambiente R para a preparação de dados, uma etapa crucial na análise de dados. O DataMaid é uma ferramenta poderosa que auxilia na verificação e limpeza de dados, fornecendo um documento para análise da estrutura dos dados. Ele é capaz de identificar diversos tipos de erros e inconsistências nos dados, como classes incorretas, duplicatas, inconsistências de capitalização, valores improváveis, espaços em branco, indicadores de falta não reconhecidos e muito mais.
-author: "[Vitor Marinho](https://github.com/vitor-marinho-fjp)"
+author: [Vitor Marinho](https://github.com/vitor-marinho-fjp)
     affiliation: Fundação João Pinheiro/Cedeplar
- "[Caio Gonçalves](https://github.com/ccsgonc)"
+ [Caio Gonçalves](https://github.com/ccsgonc)
 
 
 
