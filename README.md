@@ -1,6 +1,6 @@
----
-title: "Workshop: Crítica e Imputação de Dados: Pacote DataMaid"
-subtitle:  'Tutorial Transformação Digital nº 2' 
+
+# "Workshop: Crítica e Imputação de Dados: Pacote DataMaid"
+## subtitle:  'Tutorial Transformação Digital nº 2' 
 description: | 
   Compartilhando o código em R
 abstract: |
@@ -21,7 +21,7 @@ lang: pt
 editor: visual
 bibliography: 
  - references.bib
----
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message = F, warning = F)
@@ -61,7 +61,7 @@ Um assistente de limpeza de dados capaz de fornecer um documento para ser lido e
 
 ### Inserção do dataMaid no Fluxo de trabalho em Ciência de Dados
 
-![Fonte: Wickham & Grolemund (2017).](img/data-science.png){alt="Fonte: Wickham & Grolemund (2017)."}
+![Fonte: Wickham & Grolemund (2017).](data-science.png){alt="Fonte: Wickham & Grolemund (2017)."}
 
 Foco nos dois primeiros passos: Import → Tidy
 
